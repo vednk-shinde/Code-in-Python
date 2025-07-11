@@ -1,0 +1,48 @@
+def add_patient(): 
+    print("\n--- Add New Patient ---") 
+    with open("patients.txt", "a") as file: 
+        name = input("Enter patient name: ").strip() 
+        age = input("Enter patient age: ").strip() 
+        diagnosis = input("Enter diagnosis: ").strip() 
+        file.write(f"{name},{age},{diagnosis}\n") 
+        print("\nPatient added successfully!\n") 
+ 
+def view_patients(): 
+    print("\n--- Patient Records ---") 
+    with open("patients.txt", "r") as file: 
+        patients = file.readlines() 
+        if patients: 
+            for patient in patients: 
+                print(patient.strip()) 
+        else: 
+            print("No patient records found.") 
+ 
+def delete_patient(): 
+    print("\n--- Delete Patient Record ---") 
+    name = input("Enter patient name to delete: ").strip() 
+    lines = open("patients.txt", "r").readlines() 
+    updated_lines = [line for line in lines if name not in line] 
+ 
+    if len(lines) == len(updated_lines): 
+        print("\nNo matching record found.") 
+    else: 
+        with open("patients.txt", "w") as file: 
+            file.writelines(updated_lines) 
+        print("\nPatient record deleted.") 
+ 
+while True: 
+    print("\nPatient Record System") 
+    print("1. Add Patient\n2. View Patients\n3. Delete Patient\n4. Exit") 
+    choice = input("Enter choice (1-4): ").strip() 
+ 
+    if choice == "1": 
+        add_patient() 
+    elif choice == "2": 
+        view_patients() 
+    elif choice == "3": 
+        delete_patient() 
+    elif choice == "4": 
+        print("\nExiting... Have a great day!") 
+        break 
+    else: 
+        print("\nInvalid choice! Please enter a number between 1 and 4.") 
