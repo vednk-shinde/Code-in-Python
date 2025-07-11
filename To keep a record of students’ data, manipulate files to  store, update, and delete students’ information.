@@ -1,0 +1,48 @@
+def add_student(): 
+    print("\n--- Add New Student ---") 
+    with open("students.txt", "a") as file: 
+        name = input("Enter student name: ").strip() 
+        roll_no = input("Enter roll number: ").strip() 
+        branch = input("Enter branch: ").strip() 
+        file.write(f"{name},{roll_no},{branch}\n") 
+        print("\nStudent added successfully!\n") 
+ 
+def view_students(): 
+    print("\n--- Student Records ---") 
+    with open("students.txt", "r") as file: 
+        students = file.readlines() 
+        if students: 
+            for student in students: 
+                print(student.strip()) 
+        else: 
+            print("No student records found.") 
+ 
+def delete_student(): 
+    print("\n--- Delete Student Record ---") 
+    roll_no = input("Enter roll number to delete: ").strip() 
+    lines = open("students.txt", "r").readlines() 
+    updated_lines = [line for line in lines if roll_no not in line] 
+ 
+    if len(lines) == len(updated_lines): 
+        print("\nNo matching record found.") 
+    else: 
+        with open("students.txt", "w") as file: 
+            file.writelines(updated_lines) 
+        print("\nStudent record deleted.") 
+ 
+while True: 
+    print("\nStudent Record System") 
+    print("1. Add Student\n2. View Students\n3. Delete Student\n4. Exit") 
+    choice = input("Enter choice (1-4): ").strip() 
+ 
+    if choice == "1": 
+        add_student() 
+    elif choice == "2": 
+        view_students() 
+    elif choice == "3": 
+        delete_student() 
+    elif choice == "4": 
+        print("\nExiting... Have a great day!") 
+        break 
+else: 
+print("\nInvalid choice! Please enter a number between 1 and 4.")
