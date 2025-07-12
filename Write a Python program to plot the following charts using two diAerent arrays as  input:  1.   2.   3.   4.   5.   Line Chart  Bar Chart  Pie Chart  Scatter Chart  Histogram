@@ -1,0 +1,45 @@
+import numpy as np 
+import matplotlib.pyplot as plt 
+# Function to take array input from the user 
+def input_array(prompt): 
+arr = input(prompt) 
+arr = arr.split()  # Convert the input string to a list 
+return np.array([float(i) for i in arr])  # Convert the list of strings to a numpy array of 
+f
+ loats 
+# Take input for two arrays 
+array1 = input_array("Enter the first array (space separated): ") 
+array2 = input_array("Enter the second array (space separated): ") 
+# 1. Line Chart 
+plt.figure(figsize=(10, 6)) 
+plt.subplot(231)  # 2 rows, 3 columns, 1st chart 
+plt.plot(array1, array2, marker='o', color='b', linestyle='-', linewidth=2) 
+plt.title(' Line Chart') 
+plt.xlabel('Array 1') 
+plt.ylabel('Array 2') 
+# 2. Bar Chart 
+plt.subplot(232)  # 2 rows, 3 columns, 2nd chart 
+plt.bar(array1, array2, color='g') 
+plt.title(' Bar Chart') 
+plt.xlabel('Array 1') 
+plt.ylabel('Array 2') 
+# 3. Pie Chart 
+plt.subplot(233)  # 2 rows, 3 columns, 3rd chart 
+# Pie chart requires a sum of values, so let's consider array2 as percentage shares 
+plt.pie(array2, labels=array1, autopct='%1.1f%%', startangle=90) 
+plt.title(' Pie Chart') 
+# 4. Scatter Chart 
+plt.subplot(234)  # 2 rows, 3 columns, 4th chart 
+plt.scatter(array1, array2, color='r') 
+plt.title(' Scatter Chart') 
+plt.xlabel('Array 1') 
+plt.ylabel('Array 2') 
+# 5. Histogram 
+plt.subplot(235)  # 2 rows, 3 columns, 5th chart 
+plt.hist(array2, bins=5, color='purple', edgecolor='black') 
+plt.title(' Histogram') 
+plt.xlabel('Array 2') 
+plt.ylabel('Frequency') 
+# Show the plots 
+plt.tight_layout()  # Adjust layout for better spacing 
+plt.show()
