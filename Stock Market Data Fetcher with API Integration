@@ -1,0 +1,266 @@
+import requests
+import json
+import os
+from datetime import datetime
+import matplotlib.pyplot as plt
+from tabulate import tabulate
+
+class StockMarketAnalyzer:
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.base_url = "https://www.alphavantage.co/query"
+        self.favorites_file = "favorites.json"
+        self.favorites = self.load_favorites()
+        
+    def load_favorites(self):
+        """Load favorite stocks from file"""
+        if os.path.exists(self.favorites_file):
+            with open(self.favorites_file, 'r') as f:
+                return json.load(f)
+        return []
+    
+    def save_favorites(self):
+        """Save favorite stocks to file"""
+        with open(self.favorites_file, 'w') as f:
+            json.dump(self.favorites, f)
+    
+    def add_favorite(self, symbol):
+        """Add a stock to favorites"""
+        if symbol not in self.favorites:
+            self.favorites.append(symbol)
+            self.save_favorites()
+            return True
+        return False
+    
+    def remove_favorite(self, symbol):
+        """Remove a stock from favorites"""
+        if symbol in self.favorites:
+            self.favorites.remove(symbol)
+            self.save_favorites()
+            return True
+        return False
+    
+    def get_stock_data(self, symbol, function='TIME_SERIES_DAILY'):
+        """Fetch stock data from Alpha Vantage API"""
+        params = {
+            'function': function,
+            'symbol': symbol,
+            'apikey': self.api_key
+        }
+        
+        try:
+            response = requests.get(self.base_url, params=params)
+            response.raise_for_status()
+            data = response.json()
+            
+            if 'Error Message' in data:
+                print(f"Error: {data['Error Message']}")
+                return None
+                
+            return data
+        except requests.exceptions.RequestException as e:
+            print(f"API request failed: {e}")
+            return None
+    
+    def get_company_overview(self, symbol):
+        """Get company overview information"""
+        params = {
+            'function': 'OVERVIEW',
+            'symbol': symbol,
+            'apikey': self.api_key
+        }
+        
+        try:
+            response = requests.get(self.base_url, params=params)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print(f"API request failed: {e}")
+            return None
+    
+    def display_company_info(self, symbol):
+        """Display basic company information"""
+        overview = self.get_company_overview(symbol)
+        if not overview:
+            print(f"Could not retrieve data for {symbol}")
+            return
+        
+        print("\n" + "="*50)
+        print(f"Company: {overview.get('Name', 'N/A')}")
+        print(f"Symbol: {overview.get('Symbol', 'N/A')}")
+        print(f"Sector: {overview.get('Sector', 'N/A')}")
+        print(f"Industry: {overview.get('Industry', 'N/A')}")
+        print(f"Description: {overview.get('Description', 'N/A')[:200]}...")
+        print("="*50 + "\n")
+    
+    def display_current_rates(self, symbol):
+        """Display current stock rates"""
+        data = self.get_stock_data(symbol)
+        if not data or 'Time Series (Daily)' not in data:
+            print(f"Could not retrieve data for {symbol}")
+            return
+        
+        latest_date = max(data['Time Series (Daily)'].keys())
+        latest_data = data['Time Series (Daily)'][latest_date]
+        
+        print("\n" + "="*50)
+        print(f"Current Rates for {symbol} ({latest_date})")
+        print("="*50)
+        print(f"Open: ${latest_data['1. open']}")
+        print(f"High: ${latest_data['2. high']}")
+        print(f"Low: ${latest_data['3. low']}")
+        print(f"Close: ${latest_data['4. close']}")
+        print(f"Volume: {latest_data['5. volume']}")
+        print("="*50 + "\n")
+    
+    def plot_stock_history(self, symbol, days=30):
+        """Plot stock price history"""
+        data = self.get_stock_data(symbol)
+        if not data or 'Time Series (Daily)' not in data:
+            print(f"Could not retrieve data for {symbol}")
+            return
+        
+        dates = []
+        closes = []
+        
+        for date, values in sorted(data['Time Series (Daily)'].items(), reverse=True)[:days]:
+            dates.append(datetime.strptime(date, '%Y-%m-%d'))
+            closes.append(float(values['4. close']))
+        
+        plt.figure(figsize=(10, 5))
+        plt.plot(dates, closes, marker='o')
+        plt.title(f"{symbol} Stock Price (Last {days} Days)")
+        plt.xlabel("Date")
+        plt.ylabel("Closing Price ($)")
+        plt.grid(True)
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+    
+    def compare_stocks(self, symbols, metric='4. close'):
+        """Compare multiple stocks based on a specific metric"""
+        comparison_data = []
+        
+        for symbol in symbols:
+            data = self.get_stock_data(symbol)
+            if not data or 'Time Series (Daily)' not in data:
+                continue
+            
+            latest_date = max(data['Time Series (Daily)'].keys())
+            latest_data = data['Time Series (Daily)'][latest_date]
+            
+            overview = self.get_company_overview(symbol)
+            company_name = overview.get('Name', symbol) if overview else symbol
+            
+            comparison_data.append([
+                company_name,
+                symbol,
+                f"${latest_data[metric]}",
+                latest_date
+            ])
+        
+        if comparison_data:
+            print("\n" + "="*50)
+            print("Stock Comparison")
+            print("="*50)
+            print(tabulate(
+                comparison_data,
+                headers=["Company", "Symbol", "Close Price", "Date"],
+                tablefmt="grid"
+            ))
+            print("="*50 + "\n")
+        else:
+            print("No valid data to compare")
+    
+    def show_favorites(self):
+        """Display favorite stocks"""
+        if not self.favorites:
+            print("You have no favorite stocks yet.")
+            return
+        
+        print("\n" + "="*50)
+        print("Your Favorite Stocks")
+        print("="*50)
+        self.compare_stocks(self.favorites)
+    
+    def calculate_metrics(self, symbol):
+        """Calculate basic financial metrics"""
+        overview = self.get_company_overview(symbol)
+        if not overview:
+            print(f"Could not retrieve data for {symbol}")
+            return
+        
+        print("\n" + "="*50)
+        print(f"Financial Metrics for {symbol}")
+        print("="*50)
+        
+        metrics = [
+            ("Market Cap", overview.get('MarketCapitalization', 'N/A')),
+            ("P/E Ratio", overview.get('PERatio', 'N/A')),
+            ("PEG Ratio", overview.get('PEGRatio', 'N/A')),
+            ("EPS", overview.get('EPS', 'N/A')),
+            ("Dividend Yield", overview.get('DividendYield', 'N/A')),
+            ("52 Week High", overview.get('52WeekHigh', 'N/A')),
+            ("52 Week Low", overview.get('52WeekLow', 'N/A')),
+            ("Beta", overview.get('Beta', 'N/A'))
+        ]
+        
+        for name, value in metrics:
+            print(f"{name}: {value}")
+        
+        print("="*50 + "\n")
+
+def main():
+    # Replace with your actual Alpha Vantage API key
+    API_KEY = "YOUR_API_KEY_HERE"
+    
+    analyzer = StockMarketAnalyzer(API_KEY)
+    
+    while True:
+        print("\nStock Market Analyzer")
+        print("1. Lookup Stock")
+        print("2. View Favorite Stocks")
+        print("3. Add to Favorites")
+        print("4. Remove from Favorites")
+        print("5. Plot Stock History")
+        print("6. Compare Stocks")
+        print("7. Calculate Metrics")
+        print("8. Exit")
+        
+        choice = input("Enter your choice: ")
+        
+        if choice == '1':
+            symbol = input("Enter stock symbol: ").upper()
+            analyzer.display_company_info(symbol)
+            analyzer.display_current_rates(symbol)
+        elif choice == '2':
+            analyzer.show_favorites()
+        elif choice == '3':
+            symbol = input("Enter stock symbol to add: ").upper()
+            if analyzer.add_favorite(symbol):
+                print(f"{symbol} added to favorites")
+            else:
+                print(f"{symbol} is already in favorites")
+        elif choice == '4':
+            symbol = input("Enter stock symbol to remove: ").upper()
+            if analyzer.remove_favorite(symbol):
+                print(f"{symbol} removed from favorites")
+            else:
+                print(f"{symbol} not found in favorites")
+        elif choice == '5':
+            symbol = input("Enter stock symbol to plot: ").upper()
+            analyzer.plot_stock_history(symbol)
+        elif choice == '6':
+            symbols = input("Enter symbols to compare (comma separated): ").upper().split(',')
+            analyzer.compare_stocks([s.strip() for s in symbols])
+        elif choice == '7':
+            symbol = input("Enter stock symbol for metrics: ").upper()
+            analyzer.calculate_metrics(symbol)
+        elif choice == '8':
+            print("Exiting...")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
