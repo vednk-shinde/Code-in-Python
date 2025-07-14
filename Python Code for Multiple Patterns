@@ -1,0 +1,46 @@
+def straight_pyramid(char, height):
+    for i in range(height):
+        print(" " * (height - i - 1) + char * (2 * i + 1))
+
+def inverted_pyramid(char, height):
+    for i in range(height - 1, -1, -1):
+        print(" " * (height - i - 1) + char * (2 * i + 1))
+
+def l_shape(char, height):
+    for i in range(height):
+        print(char)
+
+    print(char * height)
+
+def right_triangle(char, height):
+    for i in range(1, height + 1):
+        print(char * i)
+
+def diamond(char, height):
+    straight_pyramid(char, height)
+    inverted_pyramid(char, height - 1)
+
+# --- MAIN MENU ---
+patterns = {
+    "1": ("Straight Pyramid", straight_pyramid),
+    "2": ("Inverted Pyramid", inverted_pyramid),
+    "3": ("L Shape", l_shape),
+    "4": ("Right Triangle", right_triangle),
+    "5": ("Diamond", diamond),
+}
+
+characters = ['*', 'X', '#', '@', '+']
+
+print("Pick a pattern:")
+for key, (name, _) in patterns.items():
+    print(f"{key}. {name}")
+
+pattern_choice = input("Enter pattern number (1-5): ")
+char_choice = input(f"Pick a character {characters}: ")
+height = int(input("Enter the height (e.g., 5): "))
+
+if pattern_choice in patterns and char_choice in characters:
+    print(f"\nPattern: {patterns[pattern_choice][0]} using '{char_choice}'\n")
+    patterns[pattern_choice][1](char_choice, height)
+else:
+    print("Invalid choice.")
