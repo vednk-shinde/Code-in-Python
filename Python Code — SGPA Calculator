@@ -1,0 +1,56 @@
+# 📚 Subject and credit info
+subjects = [
+    ("Subject 1", 4),
+    ("Subject 2", 4),
+    ("Subject 3", 2),
+    ("Subject 4", 2),
+    ("Subject 5", 2),
+    ("Subject 6", 2),
+    ("Subject 7", 1),
+    ("Subject 8", 1),
+    ("Subject 9", 1),
+]
+
+total_credits = sum(credit for _, credit in subjects)
+max_marks_per_subject = 100  # Updated here
+max_total_marks = total_credits * max_marks_per_subject
+
+# 🎯 Display Header
+print("\n" + "=" * 50)
+print("🎓 SGPA CALCULATOR".center(50))
+print("=" * 50)
+print("📘 Subjects & Credits:\n")
+for name, credit in subjects:
+    print(f"  ➤ {name.ljust(10)} - {credit} credit(s)")
+print(f"\n🧮 Total Credits     : {total_credits}")
+print(f"📝 Max Marks/Subject : {max_marks_per_subject}")
+print(f"📊 Max Total Marks   : {max_total_marks}")
+print("=" * 50 + "\n")
+
+# 📥 Input marks & calculate weighted score
+total_weighted_score = 0
+total_marks = 0
+
+for name, credit in subjects:
+    while True:
+        try:
+            marks = float(input(f"Enter marks for {name} (out of {max_marks_per_subject}): "))
+            if 0 <= marks <= max_marks_per_subject:
+                break
+            else:
+                print(f"⚠️ Please enter a value between 0 and {max_marks_per_subject}.")
+        except ValueError:
+            print("❌ Invalid input! Please enter a number.")
+    total_weighted_score += marks * credit
+    total_marks += marks
+
+# 🧠 SGPA Calculation
+sgpa = round((total_weighted_score / max_total_marks) * 10, 2)
+
+# 🖨 Final Result
+print("\n" + "=" * 50)
+print("🎯 RESULT".center(50))
+print("=" * 50)
+print(f"✅ Total Marks Entered: {total_marks}/{max_total_marks}")
+print(f"📊 SGPA (out of 10)   : {sgpa}")
+print("=" * 50)
