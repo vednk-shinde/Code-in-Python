@@ -1,0 +1,55 @@
+from IPython.display import display, clear_output
+import ipywidgets as widgets
+
+# Display field
+output = widgets.Output()
+display_area = widgets.Text(value='', placeholder='0', disabled=True, layout=widgets.Layout(width='100%'))
+
+# Buttons layout
+buttons = [
+    ['7', '8', '9', '/'],
+    ['4', '5', '6', '*'],
+    ['1', '2', '3', '-'],
+    ['0', '.', '%', '+'],
+    ['C', '(', ')', '=']
+]
+
+# Expression storage
+expression = []
+
+# Callback function
+def on_button_click(b):
+    with output:
+        clear_output(wait=True)
+        text = b.description
+        if text == "C":
+            expression.clear()
+        elif text == "=":
+            try:
+                result = str(eval(''.join(expression)))
+                expression.clear()
+                expression.append(result)
+            except Exception as e:
+                expression.clear()
+                expression.append("Error")
+        else:
+            expression.append(text)
+        
+        display_area.value = ''.join(expression)
+
+# UI Layout
+button_widgets = []
+
+for row in buttons:
+    row_widgets = []
+    for char in row:
+        button = widgets.Button(description=char, layout=widgets.Layout(width='60px'))
+        button.on_click(on_button_click)
+        row_widgets.append(button)
+    button_widgets.append(widgets.HBox(row_widgets))
+
+# Final display
+display(display_area)
+for row in button_widgets:
+    display(row)
+display(output)
