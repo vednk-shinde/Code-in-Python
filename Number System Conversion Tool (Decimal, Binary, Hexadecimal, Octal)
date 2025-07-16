@@ -1,0 +1,54 @@
+# Conversion functions
+
+def convert_from_decimal(number):
+    return {
+        "Binary": bin(number)[2:],          # Remove '0b'
+        "Hexadecimal": hex(number)[2:],     # Remove '0x'
+        "Octal": oct(number)[2:]            # Remove '0o'
+    }
+
+def convert_to_decimal(number_str, base):
+    try:
+        return int(number_str, base)
+    except ValueError:
+        return "❌ Invalid number for the selected base."
+
+# Main function (Colab-friendly interaction)
+
+def run_converter():
+    print("🔢 Number Conversion Tool (Binary, Decimal, Hex, Octal)\n")
+    print("Options:")
+    print("1️⃣  Decimal to Binary / Hex / Octal")
+    print("2️⃣  Binary to Decimal")
+    print("3️⃣  Hexadecimal to Decimal")
+    print("4️⃣  Octal to Decimal")
+    
+    choice = input("\nEnter your choice (1-4): ")
+
+    if choice == '1':
+        dec = int(input("Enter a Decimal number: "))
+        res = convert_from_decimal(dec)
+        print(f"\nBinary: {res['Binary']}")
+        print(f"Hexadecimal: {res['Hexadecimal']}")
+        print(f"Octal: {res['Octal']}")
+    
+    elif choice == '2':
+        binary = input("Enter a Binary number (e.g., 1010): ")
+        result = convert_to_decimal(binary, 2)
+        print(f"\nDecimal: {result}")
+    
+    elif choice == '3':
+        hexa = input("Enter a Hexadecimal number (e.g., 1A): ")
+        result = convert_to_decimal(hexa, 16)
+        print(f"\nDecimal: {result}")
+    
+    elif choice == '4':
+        octal = input("Enter an Octal number (e.g., 17): ")
+        result = convert_to_decimal(octal, 8)
+        print(f"\nDecimal: {result}")
+    
+    else:
+        print("❌ Invalid choice. Please run the cell again.")
+
+# Run the converter
+run_converter()
