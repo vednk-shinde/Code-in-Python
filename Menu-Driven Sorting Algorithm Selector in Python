@@ -1,0 +1,73 @@
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+    return arr
+
+def selection_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        min_idx = i
+        for j in range(i+1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    return arr
+
+def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i-1
+        while j >=0 and key < arr[j]:
+            arr[j+1] = arr[j]
+            j -= 1
+        arr[j+1] = key
+    return arr
+
+def merge_sort(arr):
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        L = merge_sort(arr[:mid])
+        R = merge_sort(arr[mid:])
+        return merge(L, R)
+    else:
+        return arr
+
+def merge(left, right):
+    result = []
+    while left and right:
+        if left[0] <= right[0]:
+            result.append(left.pop(0))
+        else:
+            result.append(right.pop(0))
+    result.extend(left or right)
+    return result
+
+n = int(input("Enter the size of the array: "))
+arr = list(map(int, input("Enter the array elements separated by space: ").split()))
+
+while True:
+    print("\nMenu:")
+    print("1. Bubble Sort")
+    print("2. Selection Sort")
+    print("3. Insertion Sort")
+    print("4. Merge Sort")
+    print("5. Exit")
+
+    choice = input("Enter your choice (1-5): ")
+
+    if choice == '1':
+        print("Sorted array (Bubble Sort):", bubble_sort(arr.copy()))
+    elif choice == '2':
+        print("Sorted array (Selection Sort):", selection_sort(arr.copy()))
+    elif choice == '3':
+        print("Sorted array (Insertion Sort):", insertion_sort(arr.copy()))
+    elif choice == '4':
+        print("Sorted array (Merge Sort):", merge_sort(arr.copy()))
+    elif choice == '5':
+        print("Exiting program.")
+        break
+    else:
+        print("Invalid choice. Please enter a number between 1 and 5.")
