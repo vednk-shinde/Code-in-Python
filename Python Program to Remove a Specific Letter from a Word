@@ -1,0 +1,9 @@
+# Get input from the user
+word = input("Enter a word: ")
+letter = input("Enter the letter to remove: ")
+
+# Remove all occurrences of the letter
+result = word.replace(letter, "")
+
+# Print the result
+print("Word after removing the letter:", result)
