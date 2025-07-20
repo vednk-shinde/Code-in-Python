@@ -1,0 +1,55 @@
+from collections import defaultdict
+
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_deleted = False
+        self.name = ""
+
+class Solution:
+    def deleteDuplicateFolder(self, paths):
+        root = TrieNode()
+
+        # Step 1: Build Trie
+        for path in paths:
+            node = root
+            for folder in path:
+                if folder not in node.children:
+                    node.children[folder] = TrieNode()
+                    node.children[folder].name = folder
+                node = node.children[folder]
+
+        serial_map = defaultdict(list)
+
+        # Step 2: Postorder Serialization
+        def serialize(node):
+            if not node.children:
+                return ""
+            serial = []
+            for child in sorted(node.children):
+                child_serial = serialize(node.children[child])
+                serial.append("{}({})".format(child, child_serial))
+            s = "".join(serial)
+            serial_map[s].append(node)
+            return s
+
+        serialize(root)
+
+        # Step 3: Mark Duplicates
+        for nodes in serial_map.values():
+            if len(nodes) > 1:
+                for node in nodes:
+                    node.is_deleted = True
+
+        # Step 4: Collect Remaining Paths
+        result = []
+
+        def dfs(node, path):
+            for name, child in node.children.items():
+                if not child.is_deleted:
+                    new_path = path + [name]
+                    result.append(new_path)
+                    dfs(child, new_path)
+
+        dfs(root, [])
+        return result
