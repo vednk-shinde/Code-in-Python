@@ -1,0 +1,9 @@
+class Solution:
+    def maxSum(self, nums):
+        unique_nums = list(set(nums))  # Remove duplicates
+        positive_nums = [num for num in unique_nums if num > 0]
+        
+        if positive_nums:
+            return sum(positive_nums)
+        else:
+            return max(unique_nums) if unique_nums else 0
