@@ -1,0 +1,21 @@
+class Solution:
+    def countMaxOrSubsets(self, nums):
+        self.max_or = 0
+        self.count = 0
+
+        def backtrack(index, current_or):
+            if index == len(nums):
+                if current_or == self.max_or:
+                    self.count += 1
+                elif current_or > self.max_or:
+                    self.max_or = current_or
+                    self.count = 1
+                return
+
+            # Include nums[index]
+            backtrack(index + 1, current_or | nums[index])
+            # Exclude nums[index]
+            backtrack(index + 1, current_or)
+
+        backtrack(0, 0)
+        return self.count
