@@ -1,0 +1,48 @@
+# Simple CLI-based Food Donation Logger
+
+donations = []
+
+def add_donation():
+    name = input("Donor Name: ")
+    food_item = input("Food Item: ")
+    quantity = input("Quantity (e.g., 2 plates, 1 kg): ")
+    contact = input("Contact Number: ")
+    location = input("Pickup Location: ")
+    
+    donation = {
+        "name": name,
+        "food_item": food_item,
+        "quantity": quantity,
+        "contact": contact,
+        "location": location
+    }
+    donations.append(donation)
+    print("\n✅ Donation added successfully!\n")
+
+def show_donations():
+    if not donations:
+        print("\nNo donations available yet.\n")
+        return
+    print("\n📦 Available Donations:")
+    for idx, d in enumerate(donations, 1):
+        print(f"{idx}. {d['food_item']} ({d['quantity']}) from {d['name']} - 📞 {d['contact']} 📍 {d['location']}")
+
+def main():
+    while True:
+        print("\n--- Food Donation Logger ---")
+        print("1. Add a Food Donation")
+        print("2. View Available Donations")
+        print("3. Exit")
+        choice = input("Choose an option (1/2/3): ")
+
+        if choice == '1':
+            add_donation()
+        elif choice == '2':
+            show_donations()
+        elif choice == '3':
+            print("Exiting. Thank you for helping fight food waste! 🍱")
+            break
+        else:
+            print("Invalid choice. Try again.")
+
+main()
