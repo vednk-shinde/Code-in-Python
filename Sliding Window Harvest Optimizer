@@ -1,0 +1,24 @@
+class Solution:
+    def maxTotalFruits(self, fruits, startPos, k):
+        n = len(fruits)
+        prefix = [0] * (n + 1)
+        for i in range(n):
+            prefix[i+1] = prefix[i] + fruits[i][1]
+
+        res = 0
+        left = 0
+
+        for right in range(n):
+            while left <= right:
+                left_pos = fruits[left][0]
+                right_pos = fruits[right][0]
+                min_steps = min(
+                    abs(startPos - left_pos) + (right_pos - left_pos),
+                    abs(startPos - right_pos) + (right_pos - left_pos)
+                )
+                if min_steps <= k:
+                    break
+                left += 1
+            total_fruits = prefix[right + 1] - prefix[left]
+            res = max(res, total_fruits)
+        return res
