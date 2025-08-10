@@ -1,0 +1,9 @@
+class Solution:
+    def reorderedSquare(self, n):
+        sig = ''.join(sorted(str(n)))
+        i = 1
+        while i * i <= 10**9:
+            if ''.join(sorted(str(i * i))) == sig:
+                return True
+            i += 1
+        return False
