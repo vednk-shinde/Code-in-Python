@@ -1,0 +1,9 @@
+class Solution:
+    def reorderedPowerOf2(self, n):
+        sig = ''.join(sorted(str(n)))
+        i = 0
+        while (1 << i) <= 10**9 * 10:  # check up to 2^30
+            if ''.join(sorted(str(1 << i))) == sig:
+                return True
+            i += 1
+        return False
