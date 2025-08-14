@@ -1,0 +1,11 @@
+class Solution:
+    def smallestGoodInteger(self, num):
+        min_good = None
+        
+        for i in range(len(num) - 2):
+            sub = num[i:i+3]
+            if sub[0] == sub[1] == sub[2]:
+                if min_good is None or sub < min_good:
+                    min_good = sub
+                    
+        return min_good if min_good else ""
