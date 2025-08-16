@@ -1,0 +1,8 @@
+class Solution:
+    def minimum96Number(self, num):
+        s = list(str(num))
+        for i in range(len(s)):
+            if s[i] == '9':
+                s[i] = '6'
+                break
+        return int("".join(s))
