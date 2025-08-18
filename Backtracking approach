@@ -1,0 +1,46 @@
+class Solution:
+    def judgePoint24(self, cards):
+        import itertools
+        
+        # Try all possible orders of the numbers
+        for nums in itertools.permutations(cards):
+            # Try all combinations of operations between them
+            if self.solve(list(nums)):
+                return True
+        return False
+    
+    def solve(self, nums):
+        # If only one number left, check if it's close to 24
+        if len(nums) == 1:
+            return abs(nums[0] - 24) < 1e-6
+        
+        # Try all pairs of taking 2 numbers and applying operations
+        n = len(nums)
+        for i in range(n):
+            for j in range(n):
+                if i != j:
+                    # Pick two numbers
+                    a = nums[i]
+                    b = nums[j]
+                    # Remaining numbers
+                    nxt = [nums[k] for k in range(n) if k != i and k != j]
+                    
+                    # Try all operations
+                    for val in [a + b, a - b, b - a, a * b]:
+                        nxt.append(val)
+                        if self.solve(nxt):
+                            return True
+                        nxt.pop()    # backtrack
+                    
+                    # Division cases (avoid division by zero)
+                    if abs(b) > 1e-6:
+                        nxt.append(a / b)
+                        if self.solve(nxt):
+                            return True
+                        nxt.pop()
+                    if abs(a) > 1e-6:
+                        nxt.append(b / a)
+                        if self.solve(nxt):
+                            return True
+                        nxt.pop()
+        return False
