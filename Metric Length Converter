@@ -1,0 +1,50 @@
+def length_converter(value, from_unit, to_unit):
+    """
+    Convert between different metric length units.
+    
+    Args:
+        value (float): The value to convert
+        from_unit (str): The unit to convert from
+        to_unit (str): The unit to convert to
+    
+    Returns:
+        float: The converted value
+    
+    Supported units:
+        - km (kilometers)
+        - m (meters)
+        - dm (decimeters)
+        - cm (centimeters)
+        - mm (millimeters)
+        - um (micrometers)
+        - nm (nanometers)
+    """
+    # Conversion factors relative to meters
+    conversion_factors = {
+        'km': 1000,
+        'm': 1,
+        'dm': 0.1,
+        'cm': 0.01,
+        'mm': 0.001,
+        'um': 1e-6,
+        'nm': 1e-9
+    }
+    
+    # Convert to meters first, then to the target unit
+    meters = value * conversion_factors[from_unit]
+    result = meters / conversion_factors[to_unit]
+    
+    return result
+
+# Example usage
+if __name__ == "__main__":
+    # Get user input
+    value = float(input("Enter the value to convert: "))
+    from_unit = input("From unit (km, m, dm, cm, mm, um, nm): ").lower()
+    to_unit = input("To unit (km, m, dm, cm, mm, um, nm): ").lower()
+    
+    # Perform conversion
+    result = length_converter(value, from_unit, to_unit)
+    
+    # Display result
+    print(f"{value} {from_unit} = {result} {to_unit}")
