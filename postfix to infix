@@ -1,0 +1,26 @@
+def is_operator(c):
+    return c in ['+', '-', '*', '/', '^']
+
+def postfix_to_infix(postfix):
+    stack = []
+
+    for c in postfix:
+        # If operand, push to stack
+        if not is_operator(c):
+            stack.append(c)
+        else:
+            # Operator -> pop two operands
+            op2 = stack.pop()
+            op1 = stack.pop()
+            # Form (op1 operator op2)
+            expr = "(" + op1 + c + op2 + ")"
+            stack.append(expr)
+
+    # Final expression in stack
+    return stack[-1]
+
+
+# Example
+postfix = "ab+c*"
+print("Postfix:", postfix)
+print("Infix:", postfix_to_infix(postfix))
