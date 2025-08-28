@@ -1,0 +1,25 @@
+from collections import defaultdict
+
+class Solution:
+    def sortMatrix(self, grid):
+        n = len(grid)
+        diagonals = defaultdict(list)
+
+        # Step 1: Collect all diagonals
+        for i in range(n):
+            for j in range(n):
+                diagonals[i - j].append(grid[i][j])
+
+        # Step 2: Sort them based on condition
+        for key in diagonals:
+            if key >= 0:   # bottom-left triangle (including main diagonal)
+                diagonals[key].sort(reverse=True)  # non-increasing
+            else:          # top-right triangle
+                diagonals[key].sort()              # non-decreasing
+
+        # Step 3: Re-fill the grid
+        for i in range(n):
+            for j in range(n):
+                grid[i][j] = diagonals[i - j].pop(0)
+
+        return grid
