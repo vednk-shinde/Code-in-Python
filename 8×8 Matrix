@@ -1,0 +1,32 @@
+from collections import defaultdict
+
+class Solution:
+    def sortMatrix(self, grid):
+        n = len(grid)
+        diagonals = defaultdict(list)
+
+        # Step 1: Collect diagonals
+        for i in range(n):
+            for j in range(n):
+                diagonals[i - j].append(grid[i][j])
+
+        # Step 2: Sort diagonals
+        for key in diagonals:
+            if key >= 0:  # bottom-left (including main diagonal)
+                diagonals[key].sort(reverse=True)
+            else:         # top-right
+                diagonals[key].sort()
+
+        # Step 3: Put back sorted values
+        for i in range(n):
+            for j in range(n):
+                grid[i][j] = diagonals[i - j].pop(0)
+
+        return grid
+
+
+# Example 8x8 matrix
+grid = [
+    [64, 21, 13, 47, 25, 36, 55, 72],
+    [14, 56, 87, 92, 33, 11, 45, 67],
+    [78, 19,  5, 44, 62, 18, 2]()
