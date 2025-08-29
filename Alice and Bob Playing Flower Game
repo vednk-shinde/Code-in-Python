@@ -1,0 +1,8 @@
+class Solution(object):
+    def flowerGame(self, n, m):
+        # Count odd and even for both ranges
+        odd_n, even_n = (n + 1) // 2, n // 2
+        odd_m, even_m = (m + 1) // 2, m // 2
+        
+        # Alice wins if (x+y) is odd
+        return odd_n * even_m + even_n * odd_m
