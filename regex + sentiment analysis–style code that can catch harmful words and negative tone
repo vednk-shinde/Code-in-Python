@@ -1,0 +1,12 @@
+import re
+from textblob import TextBlob
+
+bad_patterns = [r"\bscam\b", r"\bfraud\b", r"\bkill\b"]   # regex for harmful words
+text = input("Enter content: ")
+
+if any(re.search(pattern, text.lower()) for pattern in bad_patterns):
+    print("⚠ Content flagged: harmful words detected")
+elif TextBlob(text).sentiment.polarity < -0.3:   # checks negative sentiment
+    print("⚠ Content flagged: highly negative tone")
+else:
+    print("✅ Content approved")
