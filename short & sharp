@@ -1,0 +1,41 @@
+class Solution:
+    def numberOfPairs(self, points):
+        n = len(points)
+        xs = sorted({x for x, _ in points})
+        ys = sorted({y for _, y in points})
+        rx = {x: i+1 for i, x in enumerate(xs)}   # 1-based
+        ry = {y: i+1 for i, y in enumerate(ys)}   # 1-based
+
+        M, K = len(xs), len(ys)
+        # grid and compressed coordinates
+        g = [[0] * (K+1) for _ in range(M+1)]
+        px = [0] * n
+        py = [0] * n
+        for i, (x, y) in enumerate(points):
+            xi = rx[x]; yi = ry[y]
+            g[xi][yi] += 1
+            px[i] = xi; py[i] = yi
+
+        # 2D prefix sums: ps[i][j] = sum over 1..i,1..j
+        ps = [[0] * (K+1) for _ in range(M+1)]
+        for i in range(1, M+1):
+            row_sum = 0
+            for j in range(1, K+1):
+                row_sum += g[i][j]
+                ps[i][j] = ps[i-1][j] + row_sum
+
+        def rect_sum(x1, y1, x2, y2):
+            if x1 > x2 or y1 > y2:
+                return 0
+            return ps[x2][y2] - ps[x1-1][y2] - ps[x2][y1-1] + ps[x1-1][y1-1]
+
+        ans = 0
+        for i in range(n):
+            xi, yi = px[i], py[i]
+            for j in range(n):
+                xj, yj = px[j], py[j]
+                # Alice = upper-left, Bob = lower-right
+                if xi <= xj and yi >= yj:
+                    if rect_sum(xi, yj, xj, yi) == 2:
+                        ans += 1
+        return ans
